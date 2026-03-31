@@ -49,6 +49,13 @@ export function createTapToFireHandler({
   };
 }
 if (typeof window !== "undefined" && typeof document !== "undefined") {
+  window.addEventListener("load", () => {
+    if (!("serviceWorker" in navigator)) {
+      return;
+    }
+
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
 (function (global) {
   "use strict";
 
@@ -1595,6 +1602,7 @@ async function ensureNickname() {
   init();
 })(typeof window !== "undefined" ? window : globalThis);
 }
+
 
 
 
