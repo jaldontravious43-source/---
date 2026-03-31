@@ -36,7 +36,22 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(
     caches.match(request).then((cached) => {
+      const requestUrl = new URL(request.url);
+      const isSameOrigin = requestUrl.origin === self.location.origin;
+
       if (cached) {
+        const updatePromise = isSameOrigin
+          ? fetch(request)
+              .then((response) => {
+                if (response && response.ok) {
+                  const cloned = response.clone();
+                  caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned));
+                }
+              })
+              .catch(() => {})
+          : Promise.resolve();
+
+        event.waitUntil(updatePromise);
         return cached;
       }
 
@@ -46,15 +61,19 @@ self.addEventListener("fetch", (event) => {
             return response;
           }
 
-          const requestUrl = new URL(request.url);
-          if (requestUrl.origin === self.location.origin) {
+          if (isSameOrigin) {
             const cloned = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned));
           }
 
           return response;
         })
-        .catch(() => cached);
+        .catch(() => {
+          if (request.mode === "navigate") {
+            return caches.match("/mobile.html");
+          }
+          return undefined;
+        });
     })
   );
 });
