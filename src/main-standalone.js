@@ -1110,7 +1110,7 @@ import { canStartRound, canSubmitScore, getRecordsAction } from "./game-access.j
     hide(elements.recordsModal);
   }
 
-  function applyLoggedOutState(reason = "请先登录") {
+  function applyLoggedOutState(reason = "请先登录", options = { openAuthModal: false }) {
     authState.session = null;
     authState.user = null;
     authState.profile = null;
@@ -1125,16 +1125,18 @@ import { canStartRound, canSubmitScore, getRecordsAction } from "./game-access.j
     show(elements.overlay);
     show(elements.startBtn);
     hide(elements.restartBtn);
-    elements.overlayTitle.textContent = "手机号登录后可开始";
-    elements.overlayText.textContent = "请先完成手机号 + 验证码登录";
+    elements.overlayTitle.textContent = "邪恶小女孩出击";
+    elements.overlayText.textContent = "按空格发钩，抓住你的目标！";
 
     closeNameModal();
     closeRecordsModal();
     clearRoundRankUI();
-    openAuthModal(reason);
-  }
 
-  async function ensureNickname() {
+    if (options?.openAuthModal === true) {
+      openAuthModal(reason);
+    }
+  }
+async function ensureNickname() {
     if (!authState.user) return false;
 
     let profile = null;
@@ -1245,7 +1247,7 @@ import { canStartRound, canSubmitScore, getRecordsAction } from "./game-access.j
       // swallow and still clear local state
     }
 
-    applyLoggedOutState("已退出登录，请重新登录");
+    applyLoggedOutState("已退出登录，请重新登录", { openAuthModal: true });
   }
 
   async function handleSaveNickname() {
@@ -1394,7 +1396,7 @@ import { canStartRound, canSubmitScore, getRecordsAction } from "./game-access.j
       if (isAuthError(error)) {
         elements.rankText.textContent = "本局全服排名：--";
         setLeaderboardStatus("登录状态失效，请重新登录后继续");
-        applyLoggedOutState("登录已失效，请重新登录");
+        applyLoggedOutState("登录已失效，请重新登录", { openAuthModal: true });
         return;
       }
       elements.rankText.textContent = "本局全服排名：--";
@@ -1476,7 +1478,7 @@ import { canStartRound, canSubmitScore, getRecordsAction } from "./game-access.j
     });
 
     if (!authClient || !authClient.enabled) {
-      applyLoggedOutState("认证服务未配置或未加载");
+      applyLoggedOutState("认证服务未配置或未加载", { openAuthModal: false });
       return;
     }
 
@@ -1495,7 +1497,7 @@ import { canStartRound, canSubmitScore, getRecordsAction } from "./game-access.j
       // continue to login modal
     }
 
-    applyLoggedOutState("请先登录后开始游戏");
+    applyLoggedOutState("请先登录后开始游戏", { openAuthModal: false });
   }
 
   async function init() {
@@ -1516,6 +1518,10 @@ import { canStartRound, canSubmitScore, getRecordsAction } from "./game-access.j
 
   init();
 })(typeof window !== "undefined" ? window : globalThis);
+
+
+
+
 
 
 
