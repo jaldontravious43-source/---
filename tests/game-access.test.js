@@ -1,33 +1,48 @@
-import { canStartRound, canSubmitScore, getRecordsAction } from '../src/game-access.js';
+import assert from "node:assert/strict";
+import { canStartRound, canSubmitScore, getRecordsAction } from "../src/game-access.js";
 
-const assert = (condition, message) => {
-  if (!condition) {
-    throw new Error(message);
+function runTest(name, fn) {
+  try {
+    fn();
+    console.log(`PASS ${name}`);
+  } catch (error) {
+    console.error(`FAIL ${name}`);
+    throw error;
   }
-};
+}
 
-assert(canStartRound() === true, 'guest should always be able to start a round');
+runTest("guest can start round", () => {
+  assert.equal(canStartRound(), true);
+});
 
-assert(
-  canSubmitScore({ isAuthed: false, leaderboardEnabled: true }) === false,
-  'unauthenticated users cannot submit even when leaderboard exists'
-);
-assert(
-  canSubmitScore({ isAuthed: true, leaderboardEnabled: false }) === false,
-  'leaderboard must be enabled to submit'
-);
-assert(
-  canSubmitScore({ isAuthed: true, leaderboardEnabled: true }) === true,
-  'authenticated users with leaderboard enabled can submit'
-);
+runTest("score submit requires strict auth and leaderboard", () => {
+  assert.equal(canSubmitScore({ isAuthed: true, leaderboardEnabled: true }), true);
+  assert.equal(canSubmitScore({ isAuthed: false, leaderboardEnabled: true }), false);
+  assert.equal(canSubmitScore({ isAuthed: true, leaderboardEnabled: false }), false);
+  assert.equal(canSubmitScore({ isAuthed: true, leaderboardEnabled: undefined }), false);
+});
 
-assert(
-  getRecordsAction({ isAuthed: false }) === 'prompt_login',
-  'unauthenticated users should be prompted to log in'
-);
-assert(
-  getRecordsAction({ isAuthed: true }) === 'open_records',
-  'authenticated users should open records'
-);
+runTest("score submit rejects non-true auth values", () => {
+  for (const value of ["yes", 1, undefined]) {
+    assert.equal(canSubmitScore({ isAuthed: value, leaderboardEnabled: true }), false);
+  }
+});
 
-console.log('Game access tests completed.');
+runTest("score submit rejects non-true leaderboard values", () => {
+  for (const value of [false, undefined, 0, "true"]) {
+    assert.equal(canSubmitScore({ isAuthed: true, leaderboardEnabled: value }), false);
+  }
+});
+
+runTest("records action is open_records only when authorized", () => {
+  assert.equal(getRecordsAction({ isAuthed: true }), "open_records");
+});
+
+runTest("records action prompts login when not strictly authorized", () => {
+  assert.equal(getRecordsAction({ isAuthed: false }), "prompt_login");
+  for (const value of ["yes", 1, undefined]) {
+    assert.equal(getRecordsAction({ isAuthed: value }), "prompt_login");
+  }
+});
+
+console.log("Game access tests completed.");

@@ -1,7 +1,7 @@
 export const canStartRound = () => true;
 
 export const canSubmitScore = ({ isAuthed, leaderboardEnabled }) =>
-  Boolean(isAuthed && leaderboardEnabled);
+  isAuthed === true && leaderboardEnabled === true;
 
 export const getRecordsAction = ({ isAuthed }) =>
-  (isAuthed ? 'open_records' : 'prompt_login');
+  (isAuthed === true ? 'open_records' : 'prompt_login');
