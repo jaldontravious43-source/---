@@ -23,10 +23,18 @@ export function createOneTimeUnlocker(play) {
   };
 }
 
-export function createTapToFireHandler({ fireHook, unlockAudio, shouldIgnoreTarget = isInteractiveTarget }) {
+export function createTapToFireHandler({
+  fireHook,
+  unlockAudio,
+  shouldIgnoreTarget = isInteractiveTarget,
+  isCanvasTarget = null
+}) {
   return (event) => {
     const target = event?.target ?? null;
     if (shouldIgnoreTarget && shouldIgnoreTarget(target)) {
+      return;
+    }
+    if (typeof isCanvasTarget === "function" && !isCanvasTarget(target)) {
       return;
     }
     if (event?.cancelable) {
@@ -40,7 +48,6 @@ export function createTapToFireHandler({ fireHook, unlockAudio, shouldIgnoreTarg
     }
   };
 }
-
 if (typeof window !== "undefined" && typeof document !== "undefined") {
 (function (global) {
   "use strict";
@@ -1463,9 +1470,19 @@ async function ensureNickname() {
       audio.play("hookLaunch", 0.02);
     });
 
+    const isCanvasTarget = (target) => {
+      if (!target) return false;
+      if (target === elements.canvas) return true;
+      if (typeof target.closest === "function") {
+        return target.closest("#game-canvas") === elements.canvas;
+      }
+      return false;
+    };
+
     const tapToFire = createTapToFireHandler({
       fireHook: () => game.fireHook(),
-      unlockAudio
+      unlockAudio,
+      isCanvasTarget
     });
 
     const preventTouchMove = (event) => {
@@ -1505,7 +1522,7 @@ async function ensureNickname() {
       }
     });
 
-    window.addEventListener("pointerdown", tapToFire);
+    elements.canvas.addEventListener("pointerdown", tapToFire);
     window.addEventListener("touchstart", unlockAudio, { passive: true });
 
     elements.canvas.addEventListener("touchmove", preventTouchMove, { passive: false });

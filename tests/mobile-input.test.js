@@ -35,11 +35,34 @@ runTest("tap handler should ignore interactive targets", () => {
       fired += 1;
     },
     unlockAudio: () => {},
-    shouldIgnoreTarget: isInteractiveTarget
+    shouldIgnoreTarget: isInteractiveTarget,
+    isCanvasTarget: () => true
   });
 
   handler({
     target: { tagName: "BUTTON" },
+    cancelable: true,
+    preventDefault() {
+      this.prevented = true;
+    }
+  });
+
+  assert.equal(fired, 0);
+});
+
+runTest("tap handler should not fire outside canvas", () => {
+  let fired = 0;
+  const handler = createTapToFireHandler({
+    fireHook: () => {
+      fired += 1;
+    },
+    unlockAudio: () => {},
+    shouldIgnoreTarget: () => false,
+    isCanvasTarget: () => false
+  });
+
+  handler({
+    target: { tagName: "DIV" },
     cancelable: true,
     preventDefault() {
       this.prevented = true;
@@ -59,7 +82,8 @@ runTest("tap handler should unlock and fire on canvas", () => {
     unlockAudio: () => {
       unlocked += 1;
     },
-    shouldIgnoreTarget: () => false
+    shouldIgnoreTarget: () => false,
+    isCanvasTarget: () => true
   });
 
   const event = {
