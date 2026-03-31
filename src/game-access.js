@@ -10,3 +10,8 @@ export const getInitAuthPolicy = ({ authEnabled, hasSession }) => ({
   shouldApplyLoggedIn: authEnabled === true && hasSession === true,
   openAuthModal: false
 });
+
+export const shouldPromptLoginForRecords = ({ isAuthed }) => isAuthed !== true;
+
+export const shouldRequireNickname = ({ isAuthed, nickname }) =>
+  isAuthed === true && (!nickname || String(nickname).trim() === "");

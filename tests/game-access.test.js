@@ -1,5 +1,12 @@
 import assert from "node:assert/strict";
-import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy } from "../src/game-access.js";
+import {
+  canStartRound,
+  canSubmitScore,
+  getRecordsAction,
+  getInitAuthPolicy,
+  shouldPromptLoginForRecords,
+  shouldRequireNickname
+} from "../src/game-access.js";
 
 function runTest(name, fn) {
   try {
@@ -60,6 +67,21 @@ runTest("init policy avoids auto auth modal when session missing", () => {
 runTest("init policy allows logged-in branch when session exists", () => {
   const policy = getInitAuthPolicy({ authEnabled: true, hasSession: true });
   assert.equal(policy.shouldApplyLoggedIn, true);
+});
+
+runTest("records helper prompts login for guests", () => {
+  assert.equal(shouldPromptLoginForRecords({ isAuthed: false }), true);
+  for (const value of [undefined, "yes", 1]) {
+    assert.equal(shouldPromptLoginForRecords({ isAuthed: value }), true);
+  }
+  assert.equal(shouldPromptLoginForRecords({ isAuthed: true }), false);
+});
+
+runTest("nickname helper requires nickname only for authed users", () => {
+  assert.equal(shouldRequireNickname({ isAuthed: true, nickname: "" }), true);
+  assert.equal(shouldRequireNickname({ isAuthed: true, nickname: "  " }), true);
+  assert.equal(shouldRequireNickname({ isAuthed: true, nickname: "小红" }), false);
+  assert.equal(shouldRequireNickname({ isAuthed: false, nickname: "" }), false);
 });
 
 console.log("Game access tests completed.");

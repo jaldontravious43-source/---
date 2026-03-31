@@ -1,4 +1,4 @@
-import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy } from "./game-access.js";
+import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, shouldPromptLoginForRecords, shouldRequireNickname } from "./game-access.js";
 
 (function (global) {
   "use strict";
@@ -1326,8 +1326,7 @@ async function ensureNickname() {
 
   async function handleOpenRecords() {
     const isAuthed = Boolean(authState.user);
-    const action = getRecordsAction({ isAuthed });
-    if (action === "prompt_login") {
+    if (shouldPromptLoginForRecords({ isAuthed })) {
       openAuthModal("请先登录后再查询战绩");
       return;
     }
@@ -1404,31 +1403,26 @@ async function ensureNickname() {
     }
   }
 
+  function attemptStartRound(action) {
+    if (!canStartRound()) {
+      return;
+    }
+    if (shouldRequireNickname({ isAuthed: Boolean(authState.user), nickname: authState.nickname })) {
+      openNameModal(true);
+      return;
+    }
+
+    clearRoundRankUI();
+    action();
+  }
+
   function bindEvents() {
     elements.startBtn.addEventListener("click", () => {
-      if (!canStartRound()) {
-        return;
-      }
-      if (authState.user && !authState.nickname) {
-        openNameModal(true);
-        return;
-      }
-
-      clearRoundRankUI();
-      game.start();
+      attemptStartRound(() => game.start());
     });
 
     elements.restartBtn.addEventListener("click", () => {
-      if (!canStartRound()) {
-        return;
-      }
-      if (authState.user && !authState.nickname) {
-        openNameModal(true);
-        return;
-      }
-
-      clearRoundRankUI();
-      game.restart();
+      attemptStartRound(() => game.restart());
     });
 
     elements.sendOtpBtn.addEventListener("click", handleSendOtp);
@@ -1521,6 +1515,8 @@ async function ensureNickname() {
 
   init();
 })(typeof window !== "undefined" ? window : globalThis);
+
+
 
 
 
