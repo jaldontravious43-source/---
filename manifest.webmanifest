@@ -7,14 +7,14 @@
   "theme_color": "#101221",
   "icons": [
     {
-      "src": "/assets/images/evil-girl.jpg",
+      "src": "/assets/images/pwa-icon-192.png",
       "sizes": "192x192",
-      "type": "image/jpeg"
+      "type": "image/png"
     },
     {
-      "src": "/assets/images/evil-girl.jpg",
+      "src": "/assets/images/pwa-icon-512.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png"
     }
   ]
 }

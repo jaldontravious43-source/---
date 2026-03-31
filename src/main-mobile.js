@@ -1303,7 +1303,7 @@ async function ensureNickname() {
       // swallow and still clear local state
     }
 
-    applyLoggedOutState("已退出登录，请重新登录", { openAuthModal: true });
+    applyLoggedOutState("已退出登录，请重新登录", { openAuthModal: false });
   }
 
   async function handleSaveNickname() {
@@ -1602,6 +1602,7 @@ async function ensureNickname() {
   init();
 })(typeof window !== "undefined" ? window : globalThis);
 }
+
 
 
 

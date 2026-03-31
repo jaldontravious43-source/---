@@ -69,7 +69,8 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => {
-          if (request.mode === "navigate") {
+          const requestUrl = new URL(request.url);
+          if (request.mode === "navigate" && requestUrl.pathname === "/mobile.html") {
             return caches.match("/mobile.html");
           }
           return undefined;

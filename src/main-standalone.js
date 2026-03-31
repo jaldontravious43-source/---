@@ -1,4 +1,4 @@
-import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, shouldPromptLoginForRecords, shouldRequireNickname } from "./game-access.js";
+ï»¿import { canStartRound, canSubmitScore, getInitAuthPolicy, shouldPromptLoginForRecords, shouldRequireNickname } from "./game-access.js";
 
 (function (global) {
   "use strict";
@@ -28,7 +28,7 @@ import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, sho
 
   const ITEM_CONFIGS = {
     starHandsome: {
-      name: "Ã÷ĞÇË§¸ç",
+      name: "æ˜æ˜Ÿå¸…å“¥",
       score: 300,
       radius: 42,
       speed: 16,
@@ -39,7 +39,7 @@ import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, sho
       color: "#ffd85e"
     },
     hamster: {
-      name: "ÎÒµÄ²ÖÊó",
+      name: "æˆ‘çš„ä»“é¼ ",
       score: 120,
       radius: 20,
       speed: 58,
@@ -50,7 +50,7 @@ import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, sho
       color: "#e8b17b"
     },
     uglyMan: {
-      name: "³óÄĞ",
+      name: "ä¸‘ç”·",
       score: 20,
       radius: 44,
       speed: 8,
@@ -61,7 +61,7 @@ import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, sho
       color: "#93a1b7"
     },
     husband: {
-      name: "ÎÒÀÏ¹«",
+      name: "æˆ‘è€å…¬",
       score: 500,
       radius: 24,
       speed: 96,
@@ -72,7 +72,7 @@ import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, sho
       color: "#ff6aa0"
     },
     angryOctopus: {
-      name: "·ßÅ­ÕÂÓã¸ç",
+      name: "æ„¤æ€’ç« é±¼å“¥",
       score: -GAME_CONFIG.angryOctopusPenalty,
       radius: 30,
       speed: 42,
@@ -703,8 +703,8 @@ import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, sho
       show(elements.restartBtn);
 
       const isWin = this.score >= this.targetScore;
-      elements.overlayTitle.textContent = isWin ? "ÄãÓ®ÁË£¡" : "²îÒ»µãµã";
-      elements.overlayText.textContent = `±¾¾ÖµÃ·Ö ${Math.max(0, Math.floor(this.score))}£¬Ä¿±ê·Ö ${this.targetScore}`;
+      elements.overlayTitle.textContent = isWin ? "ä½ èµ¢äº†ï¼" : "å·®ä¸€ç‚¹ç‚¹";
+      elements.overlayText.textContent = `æœ¬å±€å¾—åˆ† ${Math.max(0, Math.floor(this.score))}ï¼Œç›®æ ‡åˆ† ${this.targetScore}`;
 
       this.audio.play(isWin ? "win" : "lose", 0.62);
 
@@ -841,7 +841,7 @@ import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, sho
       this.ctx.fillStyle = "#ffffff";
       this.ctx.font = "18px Microsoft YaHei";
       this.ctx.textAlign = "center";
-      this.ctx.fillText("Ğ°¶ñĞ¡Å®º¢", GAME_CONFIG.width / 2, 93);
+      this.ctx.fillText("é‚ªæ¶å°å¥³å­©", GAME_CONFIG.width / 2, 93);
       this.renderRescuedHusband();
     }
 
@@ -1026,7 +1026,7 @@ import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, sho
   }
 
   function clearRoundRankUI() {
-    elements.rankText.textContent = "±¾¾ÖÈ«·şÅÅÃû£º--";
+    elements.rankText.textContent = "æœ¬å±€å…¨æœæ’åï¼š--";
     hide(elements.rankText);
     elements.leaderboardStatus.textContent = "";
     hide(elements.leaderboardStatus);
@@ -1050,18 +1050,18 @@ import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, sho
 
   function updateAuthHUD() {
     if (!authState.user) {
-      elements.authLabel.textContent = "Î´µÇÂ¼";
-      elements.playerNameLabel.textContent = "Î´ÉèÖÃ";
+      elements.authLabel.textContent = "æœªç™»å½•";
+      elements.playerNameLabel.textContent = "æœªè®¾ç½®";
       return;
     }
 
-    const mask = authState.maskedPhone || "ÒÑµÇÂ¼";
-    elements.authLabel.textContent = `ÒÑµÇÂ¼ ${mask}`;
-    elements.playerNameLabel.textContent = authState.nickname || "Î´ÉèÖÃ";
+    const mask = authState.maskedPhone || "å·²ç™»å½•";
+    elements.authLabel.textContent = `å·²ç™»å½• ${mask}`;
+    elements.playerNameLabel.textContent = authState.nickname || "æœªè®¾ç½®";
   }
 
   function openAuthModal(tip = "") {
-    setAuthStatus(tip || "ÇëÏÈµÇÂ¼", false);
+    setAuthStatus(tip || "è¯·å…ˆç™»å½•", false);
     show(elements.authModal);
   }
 
@@ -1072,7 +1072,7 @@ import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, sho
 
   function openNameModal(force = true) {
     elements.nameModal.dataset.force = force ? "1" : "0";
-    elements.nameModalTitle.textContent = force ? "ÉèÖÃêÇ³Æ" : "ĞŞ¸ÄêÇ³Æ";
+    elements.nameModalTitle.textContent = force ? "è®¾ç½®æ˜µç§°" : "ä¿®æ”¹æ˜µç§°";
 
     if (force) {
       hide(elements.nameCancelBtn);
@@ -1110,7 +1110,7 @@ import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, sho
     hide(elements.recordsModal);
   }
 
-  function applyLoggedOutState(reason = "ÇëÏÈµÇÂ¼", options = { openAuthModal: false }) {
+  function applyLoggedOutState(reason = "è¯·å…ˆç™»å½•", options = { openAuthModal: false }) {
     authState.session = null;
     authState.user = null;
     authState.profile = null;
@@ -1125,8 +1125,8 @@ import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy, sho
     show(elements.overlay);
     show(elements.startBtn);
     hide(elements.restartBtn);
-    elements.overlayTitle.textContent = "Ğ°¶ñĞ¡Å®º¢³ö»÷";
-    elements.overlayText.textContent = "°´¿Õ¸ñ·¢¹³£¬×¥×¡ÄãµÄÄ¿±ê£¡";
+    elements.overlayTitle.textContent = "é‚ªæ¶å°å¥³å­©å‡ºå‡»";
+    elements.overlayText.textContent = "æŒ‰ç©ºæ ¼å‘é’©ï¼ŒæŠ“ä½ä½ çš„ç›®æ ‡ï¼";
 
     closeNameModal();
     closeRecordsModal();
@@ -1176,13 +1176,13 @@ async function ensureNickname() {
 
     await ensureNickname();
 
-    elements.overlayTitle.textContent = "Ğ°¶ñĞ¡Å®º¢³ö»÷";
-    elements.overlayText.textContent = "°´¿Õ¸ñ·¢¹³£¬×¥×¡ÄãµÄÄ¿±ê£¡";
+    elements.overlayTitle.textContent = "é‚ªæ¶å°å¥³å­©å‡ºå‡»";
+    elements.overlayText.textContent = "æŒ‰ç©ºæ ¼å‘é’©ï¼ŒæŠ“ä½ä½ çš„ç›®æ ‡ï¼";
   }
 
   async function handleSendOtp() {
     if (!authClient?.enabled) {
-      setAuthStatus("ÈÏÖ¤·şÎñ²»¿ÉÓÃ", true);
+      setAuthStatus("è®¤è¯æœåŠ¡ä¸å¯ç”¨", true);
       return;
     }
 
@@ -1190,7 +1190,7 @@ async function ensureNickname() {
     const normalized = global.AuthClient.normalizePhoneNumber(rawPhone);
 
     if (!normalized) {
-      setAuthStatus("ÊÖ»úºÅ¸ñÊ½²»ÕıÈ·", true);
+      setAuthStatus("æ‰‹æœºå·æ ¼å¼ä¸æ­£ç¡®", true);
       return;
     }
 
@@ -1198,13 +1198,13 @@ async function ensureNickname() {
     elements.phoneInput.value = normalized;
 
     disableButton(elements.sendOtpBtn, true);
-    setAuthStatus("ÑéÖ¤Âë·¢ËÍÖĞ...");
+    setAuthStatus("éªŒè¯ç å‘é€ä¸­...");
 
     try {
       await authClient.sendOtp(normalized);
-      setAuthStatus("ÑéÖ¤ÂëÒÑ·¢ËÍ£¬Çë²éÊÕ¶ÌĞÅ");
+      setAuthStatus("éªŒè¯ç å·²å‘é€ï¼Œè¯·æŸ¥æ”¶çŸ­ä¿¡");
     } catch (error) {
-      setAuthStatus(`·¢ËÍÊ§°Ü£º${error?.message || "ÇëÉÔºóÖØÊÔ"}`, true);
+      setAuthStatus(`å‘é€å¤±è´¥ï¼š${error?.message || "è¯·ç¨åé‡è¯•"}`, true);
     } finally {
       disableButton(elements.sendOtpBtn, false);
     }
@@ -1212,7 +1212,7 @@ async function ensureNickname() {
 
   async function handleVerifyOtp() {
     if (!authClient?.enabled) {
-      setAuthStatus("ÈÏÖ¤·şÎñ²»¿ÉÓÃ", true);
+      setAuthStatus("è®¤è¯æœåŠ¡ä¸å¯ç”¨", true);
       return;
     }
 
@@ -1220,19 +1220,19 @@ async function ensureNickname() {
     const otp = elements.otpInput.value.trim();
 
     disableButton(elements.verifyOtpBtn, true);
-    setAuthStatus("µÇÂ¼ÖĞ...");
+    setAuthStatus("ç™»å½•ä¸­...");
 
     try {
       await authClient.verifyOtp(phone, otp);
       const session = await authClient.getSession();
       if (!session?.user) {
-        throw new Error("µÇÂ¼Ê§°Ü£¬ÇëÖØÊÔ");
+        throw new Error("ç™»å½•å¤±è´¥ï¼Œè¯·é‡è¯•");
       }
       await applyLoggedInState(session);
       elements.otpInput.value = "";
-      setAuthStatus("µÇÂ¼³É¹¦");
+      setAuthStatus("ç™»å½•æˆåŠŸ");
     } catch (error) {
-      setAuthStatus(`µÇÂ¼Ê§°Ü£º${error?.message || "ÇëÖØÊÔ"}`, true);
+      setAuthStatus(`ç™»å½•å¤±è´¥ï¼š${error?.message || "è¯·é‡è¯•"}`, true);
     } finally {
       disableButton(elements.verifyOtpBtn, false);
     }
@@ -1247,13 +1247,13 @@ async function ensureNickname() {
       // swallow and still clear local state
     }
 
-    applyLoggedOutState("ÒÑÍË³öµÇÂ¼£¬ÇëÖØĞÂµÇÂ¼", { openAuthModal: true });
+    applyLoggedOutState("å·²é€€å‡ºç™»å½•ï¼Œè¯·é‡æ–°ç™»å½•", { openAuthModal: false });
   }
 
   async function handleSaveNickname() {
     if (!authState.user) {
       show(elements.nameError);
-      elements.nameError.textContent = "ÇëÏÈµÇÂ¼";
+      elements.nameError.textContent = "è¯·å…ˆç™»å½•";
       return;
     }
 
@@ -1275,7 +1275,7 @@ async function ensureNickname() {
       closeNameModal();
     } catch (error) {
       show(elements.nameError);
-      elements.nameError.textContent = error?.message || "êÇ³Æ±£´æÊ§°Ü";
+      elements.nameError.textContent = error?.message || "æ˜µç§°ä¿å­˜å¤±è´¥";
     } finally {
       disableButton(elements.nameSaveBtn, false);
     }
@@ -1304,17 +1304,17 @@ async function ensureNickname() {
 
   function renderRecordsRows(rows) {
     if (!rows.length) {
-      elements.recordsList.innerHTML = '<div class="records-row"><span>ÔİÎŞ¼ÇÂ¼</span><span></span><span></span><span></span></div>';
+      elements.recordsList.innerHTML = '<div class="records-row"><span>æš‚æ— è®°å½•</span><span></span><span></span><span></span></div>';
       return;
     }
 
     const head =
-      '<div class="records-row head"><span>ÅÅÃû</span><span>êÇ³Æ</span><span>·ÖÊı</span><span>ÓÎÏ·Ê±¼ä</span></div>';
+      '<div class="records-row head"><span>æ’å</span><span>æ˜µç§°</span><span>åˆ†æ•°</span><span>æ¸¸æˆæ—¶é—´</span></div>';
 
     const body = rows
       .map((row, index) => {
         const rank = index + 1;
-        const name = escapeHtml(String(row.player_name || "ÄäÃû"));
+        const name = escapeHtml(String(row.player_name || "åŒ¿å"));
         const score = Number(row.score || 0);
         const playedAt = escapeHtml(formatPlayedAt(row.created_at));
         return `<div class="records-row"><span>#${rank}</span><span>${name}</span><span>${score}</span><span>${playedAt}</span></div>`;
@@ -1327,16 +1327,16 @@ async function ensureNickname() {
   async function handleOpenRecords() {
     const isAuthed = Boolean(authState.user);
     if (shouldPromptLoginForRecords({ isAuthed })) {
-      openAuthModal("ÇëÏÈµÇÂ¼ºóÔÙ²éÑ¯Õ½¼¨");
+      openAuthModal("è¯·å…ˆç™»å½•åå†æŸ¥è¯¢æˆ˜ç»©");
       return;
     }
 
     show(elements.recordsModal);
-    elements.recordsStatus.textContent = "¼ÓÔØÖĞ...";
+    elements.recordsStatus.textContent = "åŠ è½½ä¸­...";
     elements.recordsList.innerHTML = "";
 
     if (!leaderboardClient?.enabled) {
-      elements.recordsStatus.textContent = "ÅÅĞĞ°ñÎ´ÅäÖÃ";
+      elements.recordsStatus.textContent = "æ’è¡Œæ¦œæœªé…ç½®";
       return;
     }
 
@@ -1345,9 +1345,9 @@ async function ensureNickname() {
     try {
       const rows = await leaderboardClient.fetchTopScores(15);
       renderRecordsRows(rows);
-      elements.recordsStatus.textContent = `ÒÑ¼ÓÔØ ${rows.length} Ìõ`;
+      elements.recordsStatus.textContent = `å·²åŠ è½½ ${rows.length} æ¡`;
     } catch (error) {
-      elements.recordsStatus.textContent = `¼ÓÔØÊ§°Ü£º${error?.message || "ÇëÉÔºóÖØÊÔ"}`;
+      elements.recordsStatus.textContent = `åŠ è½½å¤±è´¥ï¼š${error?.message || "è¯·ç¨åé‡è¯•"}`;
     } finally {
       disableButton(elements.recordsBtn, false);
     }
@@ -1360,21 +1360,21 @@ async function ensureNickname() {
     const leaderboardEnabled = Boolean(leaderboardClient?.enabled);
     if (!canSubmitScore({ isAuthed, leaderboardEnabled })) {
       if (!isAuthed) {
-        setLeaderboardStatus("ÓÎ¿ÍÄ£Ê½£ºµÇÂ¼ºó¿É²ÎÓëÅÅĞĞ°ñ");
+        setLeaderboardStatus("æ¸¸å®¢æ¨¡å¼ï¼šç™»å½•åå¯å‚ä¸æ’è¡Œæ¦œ");
         return;
       }
       if (!leaderboardEnabled) {
-        setLeaderboardStatus("ÅÅĞĞ°ñÎ´ÅäÖÃ");
+        setLeaderboardStatus("æ’è¡Œæ¦œæœªé…ç½®");
         return;
       }
     }
 
     show(elements.rankText);
-    elements.rankText.textContent = "±¾¾ÖÈ«·şÅÅÃû£º¼ÆËãÖĞ...";
+    elements.rankText.textContent = "æœ¬å±€å…¨æœæ’åï¼šè®¡ç®—ä¸­...";
 
     const payload = {
       user_id: authState.user.id,
-      player_name: authState.nickname || "Î´ÃüÃû",
+      player_name: authState.nickname || "æœªå‘½å",
       score: Math.max(0, Number(result.score || 0)),
       duration_seconds: Math.max(1, Number(result.durationSeconds || GAME_CONFIG.roundSeconds)),
       captured_husband_count: Math.max(0, Number(result.capturedHusbandCount || 0))
@@ -1387,19 +1387,19 @@ async function ensureNickname() {
       const rank = global.LeaderboardUtils.findInsertedEntryRank(sorted, inserted.id);
 
       if (rank) {
-        elements.rankText.textContent = `±¾¾ÖÈ«·şÅÅÃû£º#${rank}`;
+        elements.rankText.textContent = `æœ¬å±€å…¨æœæ’åï¼š#${rank}`;
       } else {
-        elements.rankText.textContent = "±¾¾ÖÈ«·şÅÅÃû£º--";
+        elements.rankText.textContent = "æœ¬å±€å…¨æœæ’åï¼š--";
       }
     } catch (error) {
       if (isAuthError(error)) {
-        elements.rankText.textContent = "±¾¾ÖÈ«·şÅÅÃû£º--";
-        setLeaderboardStatus("µÇÂ¼×´Ì¬Ê§Ğ§£¬ÇëÖØĞÂµÇÂ¼ºó¼ÌĞø");
-        applyLoggedOutState("µÇÂ¼ÒÑÊ§Ğ§£¬ÇëÖØĞÂµÇÂ¼", { openAuthModal: true });
+        elements.rankText.textContent = "æœ¬å±€å…¨æœæ’åï¼š--";
+        setLeaderboardStatus("ç™»å½•çŠ¶æ€å¤±æ•ˆï¼Œè¯·é‡æ–°ç™»å½•åç»§ç»­");
+        applyLoggedOutState("ç™»å½•å·²å¤±æ•ˆï¼Œè¯·é‡æ–°ç™»å½•", { openAuthModal: true });
         return;
       }
-      elements.rankText.textContent = "±¾¾ÖÈ«·şÅÅÃû£º--";
-      setLeaderboardStatus(`³É¼¨Ìá½»Ê§°Ü£º${error?.message || "ÇëÉÔºóÖØÊÔ"}`);
+      elements.rankText.textContent = "æœ¬å±€å…¨æœæ’åï¼š--";
+      setLeaderboardStatus(`æˆç»©æäº¤å¤±è´¥ï¼š${error?.message || "è¯·ç¨åé‡è¯•"}`);
     }
   }
 
@@ -1434,7 +1434,7 @@ async function ensureNickname() {
 
     elements.renameBtn.addEventListener("click", () => {
       if (!authState.user) {
-        openAuthModal("ÇëÏÈµÇÂ¼");
+        openAuthModal("è¯·å…ˆç™»å½•");
         return;
       }
       openNameModal(false);
@@ -1473,7 +1473,7 @@ async function ensureNickname() {
 
     if (!authClient || !authClient.enabled) {
       const initPolicy = getInitAuthPolicy({ authEnabled: false, hasSession: false });
-      applyLoggedOutState("ÈÏÖ¤·şÎñÎ´ÅäÖÃ»òÎ´¼ÓÔØ", { openAuthModal: initPolicy.openAuthModal });
+      applyLoggedOutState("è®¤è¯æœåŠ¡æœªé…ç½®æˆ–æœªåŠ è½½", { openAuthModal: initPolicy.openAuthModal });
       return;
     }
 
@@ -1494,7 +1494,7 @@ async function ensureNickname() {
     }
 
     const initPolicy = getInitAuthPolicy({ authEnabled: true, hasSession: false });
-    applyLoggedOutState("ÇëÏÈµÇÂ¼ºó¿ªÊ¼ÓÎÏ·", { openAuthModal: initPolicy.openAuthModal });
+    applyLoggedOutState("è¯·å…ˆç™»å½•åå¼€å§‹æ¸¸æˆ", { openAuthModal: initPolicy.openAuthModal });
   }
 
   async function init() {
@@ -1515,6 +1515,8 @@ async function ensureNickname() {
 
   init();
 })(typeof window !== "undefined" ? window : globalThis);
+
+
 
 
 
