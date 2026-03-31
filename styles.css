@@ -267,3 +267,58 @@ button:disabled {
 .hidden {
   display: none !important;
 }
+
+.mobile-page {
+  min-height: 100dvh;
+  display: block;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  overflow: hidden;
+}
+
+.mobile-app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+
+.mobile-app .hud {
+  font-size: 14px;
+  gap: 6px 12px;
+  padding: 10px 12px;
+}
+
+.mobile-app .player-actions {
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  font-size: 12px;
+}
+
+.mobile-app .stage-wrap {
+  flex: 1;
+  width: 100%;
+  min-height: 50vh;
+  border-radius: 12px;
+}
+
+.mobile-app #game-canvas {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  touch-action: none;
+}
+
+.mobile-page .overlay {
+  padding: 18px;
+}
+
+.mobile-page .leaderboard-panel {
+  width: min(90vw, 520px);
+}
+
+.mobile-page .records-card {
+  width: min(92vw, 760px);
+}

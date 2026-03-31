@@ -1,5 +1,61 @@
 ﻿import { canStartRound, canSubmitScore, getInitAuthPolicy, shouldPromptLoginForRecords, shouldRequireNickname } from "./game-access.js";
 
+const INTERACTIVE_TAGS = new Set(["BUTTON", "INPUT", "TEXTAREA", "SELECT", "A", "LABEL"]);
+const INTERACTIVE_SELECTOR = "button, input, textarea, select, a, label, [data-no-fire]";
+
+export function isInteractiveTarget(target) {
+  if (!target) return false;
+  if (typeof target.closest === "function") {
+    return Boolean(target.closest(INTERACTIVE_SELECTOR));
+  }
+  const tagName = String(target.tagName || "").toUpperCase();
+  return INTERACTIVE_TAGS.has(tagName);
+}
+
+export function createOneTimeUnlocker(play) {
+  let unlocked = false;
+  return () => {
+    if (unlocked) return;
+    unlocked = true;
+    if (typeof play === "function") {
+      play();
+    }
+  };
+}
+
+export function createTapToFireHandler({
+  fireHook,
+  unlockAudio,
+  shouldIgnoreTarget = isInteractiveTarget,
+  isCanvasTarget = null
+}) {
+  return (event) => {
+    const target = event?.target ?? null;
+    if (shouldIgnoreTarget && shouldIgnoreTarget(target)) {
+      return;
+    }
+    if (typeof isCanvasTarget === "function" && !isCanvasTarget(target)) {
+      return;
+    }
+    if (event?.cancelable) {
+      event.preventDefault();
+    }
+    if (typeof unlockAudio === "function") {
+      unlockAudio();
+    }
+    if (typeof fireHook === "function") {
+      fireHook();
+    }
+  };
+}
+if (typeof window !== "undefined" && typeof document !== "undefined") {
+  window.addEventListener("load", () => {
+    if (!("serviceWorker" in navigator)) {
+      return;
+    }
+
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
 (function (global) {
   "use strict";
 
@@ -1126,7 +1182,7 @@
     show(elements.startBtn);
     hide(elements.restartBtn);
     elements.overlayTitle.textContent = "邪恶小女孩出击";
-    elements.overlayText.textContent = "按空格发钩，抓住你的目标！";
+    elements.overlayText.textContent = "点击屏幕发钩，抓住你的目标！";
 
     closeNameModal();
     closeRecordsModal();
@@ -1177,7 +1233,7 @@ async function ensureNickname() {
     await ensureNickname();
 
     elements.overlayTitle.textContent = "邪恶小女孩出击";
-    elements.overlayText.textContent = "按空格发钩，抓住你的目标！";
+    elements.overlayText.textContent = "点击屏幕发钩，抓住你的目标！";
   }
 
   async function handleSendOtp() {
@@ -1417,6 +1473,31 @@ async function ensureNickname() {
   }
 
   function bindEvents() {
+    const unlockAudio = createOneTimeUnlocker(() => {
+      audio.play("hookLaunch", 0.02);
+    });
+
+    const isCanvasTarget = (target) => {
+      if (!target) return false;
+      if (target === elements.canvas) return true;
+      if (typeof target.closest === "function") {
+        return target.closest("#game-canvas") === elements.canvas;
+      }
+      return false;
+    };
+
+    const tapToFire = createTapToFireHandler({
+      fireHook: () => game.fireHook(),
+      unlockAudio,
+      isCanvasTarget
+    });
+
+    const preventTouchMove = (event) => {
+      if (event.cancelable) {
+        event.preventDefault();
+      }
+    };
+
     elements.startBtn.addEventListener("click", () => {
       attemptStartRound(() => game.start());
     });
@@ -1448,6 +1529,12 @@ async function ensureNickname() {
       }
     });
 
+    elements.canvas.addEventListener("pointerdown", tapToFire);
+    window.addEventListener("touchstart", unlockAudio, { passive: true });
+
+    elements.canvas.addEventListener("touchmove", preventTouchMove, { passive: false });
+    elements.overlay.addEventListener("touchmove", preventTouchMove, { passive: false });
+
     window.addEventListener("keydown", (event) => {
       if (event.code !== "Space") {
         return;
@@ -1457,7 +1544,6 @@ async function ensureNickname() {
       game.fireHook();
     });
   }
-
   async function initClients() {
     leaderboardClient = global.LeaderboardClient?.createLeaderboardClient({
       supabaseUrl: SUPABASE_CONFIG.url,
@@ -1515,6 +1601,7 @@ async function ensureNickname() {
 
   init();
 })(typeof window !== "undefined" ? window : globalThis);
+}
 
 
 

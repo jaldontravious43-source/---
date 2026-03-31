@@ -5,6 +5,26 @@ All notable changes to this project are documented in this file.
 ## [Unreleased]
 
 ### Added - 2026-03-31
+- Added guest/auth access policy module: `src/game-access.js`.
+- Added access policy tests: `tests/game-access.test.js`.
+- Added mobile entry page: `mobile.html`.
+- Added mobile runtime script: `src/main-mobile.js`.
+- Added mobile touch input tests: `tests/mobile-input.test.js`.
+- Added PWA manifest: `manifest.webmanifest`.
+- Added service worker offline shell: `sw.js`.
+
+### Changed - 2026-03-31
+- Changed desktop runtime (`src/main-standalone.js`) to guest-first gameplay:
+  - guests can start/restart without forced login modal
+  - ranking submit/query stays login-gated with explicit prompts
+  - auth init flow no longer blocks gameplay when session is absent
+- Changed `index.html` standalone entry to module script loading for ESM-compatible runtime.
+- Changed mobile controls to tap-to-fire on canvas with iOS-friendly one-time audio unlock.
+- Changed `styles.css` with iPhone-safe-area and mobile layout rules for `mobile.html`.
+- Changed `sw.js` fetch strategy to stale-while-revalidate style with offline navigation fallback to `/mobile.html`.
+- Changed `README.md` to document guest mode, iPhone mobile entry, and PWA install/use constraints.
+
+### Added - 2026-03-31
 - Added new underwater target "愤怒章鱼哥" in gameplay configs:
   - `src/main-standalone.js`
   - `src/config.js`

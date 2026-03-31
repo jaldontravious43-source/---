@@ -4,6 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/core.test.js && node tests/leaderboard.test.js && node tests/auth-client.test.js"
+    "test": "node tests/core.test.js && node tests/leaderboard.test.js && node tests/auth-client.test.js && node tests/game-access.test.js && node tests/mobile-input.test.js"
   }
 }
