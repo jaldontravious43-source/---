@@ -1,4 +1,6 @@
-ï»¿(function (global) {
+import { canStartRound, canSubmitScore, getRecordsAction } from "./game-access.js";
+
+(function (global) {
   "use strict";
 
   const SUPABASE_CONFIG = {
@@ -26,7 +28,7 @@
 
   const ITEM_CONFIGS = {
     starHandsome: {
-      name: "æ˜æ˜Ÿå¸…å“¥",
+      name: "Ã÷ĞÇË§¸ç",
       score: 300,
       radius: 42,
       speed: 16,
@@ -37,7 +39,7 @@
       color: "#ffd85e"
     },
     hamster: {
-      name: "æˆ‘çš„ä»“é¼ ",
+      name: "ÎÒµÄ²ÖÊó",
       score: 120,
       radius: 20,
       speed: 58,
@@ -48,7 +50,7 @@
       color: "#e8b17b"
     },
     uglyMan: {
-      name: "ä¸‘ç”·",
+      name: "³óÄĞ",
       score: 20,
       radius: 44,
       speed: 8,
@@ -59,7 +61,7 @@
       color: "#93a1b7"
     },
     husband: {
-      name: "æˆ‘è€å…¬",
+      name: "ÎÒÀÏ¹«",
       score: 500,
       radius: 24,
       speed: 96,
@@ -70,7 +72,7 @@
       color: "#ff6aa0"
     },
     angryOctopus: {
-      name: "æ„¤æ€’ç« é±¼å“¥",
+      name: "·ßÅ­ÕÂÓã¸ç",
       score: -GAME_CONFIG.angryOctopusPenalty,
       radius: 30,
       speed: 42,
@@ -701,8 +703,8 @@
       show(elements.restartBtn);
 
       const isWin = this.score >= this.targetScore;
-      elements.overlayTitle.textContent = isWin ? "ä½ èµ¢äº†ï¼" : "å·®ä¸€ç‚¹ç‚¹";
-      elements.overlayText.textContent = `æœ¬å±€å¾—åˆ† ${Math.max(0, Math.floor(this.score))}ï¼Œç›®æ ‡åˆ† ${this.targetScore}`;
+      elements.overlayTitle.textContent = isWin ? "ÄãÓ®ÁË£¡" : "²îÒ»µãµã";
+      elements.overlayText.textContent = `±¾¾ÖµÃ·Ö ${Math.max(0, Math.floor(this.score))}£¬Ä¿±ê·Ö ${this.targetScore}`;
 
       this.audio.play(isWin ? "win" : "lose", 0.62);
 
@@ -839,7 +841,7 @@
       this.ctx.fillStyle = "#ffffff";
       this.ctx.font = "18px Microsoft YaHei";
       this.ctx.textAlign = "center";
-      this.ctx.fillText("é‚ªæ¶å°å¥³å­©", GAME_CONFIG.width / 2, 93);
+      this.ctx.fillText("Ğ°¶ñĞ¡Å®º¢", GAME_CONFIG.width / 2, 93);
       this.renderRescuedHusband();
     }
 
@@ -1011,9 +1013,9 @@
   }
 
   function setControlsByAuth(isAuthed) {
-    disableButton(elements.startBtn, !isAuthed);
-    disableButton(elements.restartBtn, !isAuthed);
-    disableButton(elements.recordsBtn, !isAuthed);
+    disableButton(elements.startBtn, !canStartRound());
+    disableButton(elements.restartBtn, !canStartRound());
+    disableButton(elements.recordsBtn, false);
     disableButton(elements.renameBtn, !isAuthed);
 
     if (isAuthed) {
@@ -1024,7 +1026,7 @@
   }
 
   function clearRoundRankUI() {
-    elements.rankText.textContent = "æœ¬å±€å…¨æœæ’åï¼š--";
+    elements.rankText.textContent = "±¾¾ÖÈ«·şÅÅÃû£º--";
     hide(elements.rankText);
     elements.leaderboardStatus.textContent = "";
     hide(elements.leaderboardStatus);
@@ -1048,18 +1050,18 @@
 
   function updateAuthHUD() {
     if (!authState.user) {
-      elements.authLabel.textContent = "æœªç™»å½•";
-      elements.playerNameLabel.textContent = "æœªè®¾ç½®";
+      elements.authLabel.textContent = "Î´µÇÂ¼";
+      elements.playerNameLabel.textContent = "Î´ÉèÖÃ";
       return;
     }
 
-    const mask = authState.maskedPhone || "å·²ç™»å½•";
-    elements.authLabel.textContent = `å·²ç™»å½• ${mask}`;
-    elements.playerNameLabel.textContent = authState.nickname || "æœªè®¾ç½®";
+    const mask = authState.maskedPhone || "ÒÑµÇÂ¼";
+    elements.authLabel.textContent = `ÒÑµÇÂ¼ ${mask}`;
+    elements.playerNameLabel.textContent = authState.nickname || "Î´ÉèÖÃ";
   }
 
   function openAuthModal(tip = "") {
-    setAuthStatus(tip || "è¯·å…ˆç™»å½•", false);
+    setAuthStatus(tip || "ÇëÏÈµÇÂ¼", false);
     show(elements.authModal);
   }
 
@@ -1070,7 +1072,7 @@
 
   function openNameModal(force = true) {
     elements.nameModal.dataset.force = force ? "1" : "0";
-    elements.nameModalTitle.textContent = force ? "è®¾ç½®æ˜µç§°" : "ä¿®æ”¹æ˜µç§°";
+    elements.nameModalTitle.textContent = force ? "ÉèÖÃêÇ³Æ" : "ĞŞ¸ÄêÇ³Æ";
 
     if (force) {
       hide(elements.nameCancelBtn);
@@ -1108,7 +1110,7 @@
     hide(elements.recordsModal);
   }
 
-  function applyLoggedOutState(reason = "è¯·å…ˆç™»å½•") {
+  function applyLoggedOutState(reason = "ÇëÏÈµÇÂ¼") {
     authState.session = null;
     authState.user = null;
     authState.profile = null;
@@ -1123,8 +1125,8 @@
     show(elements.overlay);
     show(elements.startBtn);
     hide(elements.restartBtn);
-    elements.overlayTitle.textContent = "æ‰‹æœºå·ç™»å½•åå¯å¼€å§‹";
-    elements.overlayText.textContent = "è¯·å…ˆå®Œæˆæ‰‹æœºå· + éªŒè¯ç ç™»å½•";
+    elements.overlayTitle.textContent = "ÊÖ»úºÅµÇÂ¼ºó¿É¿ªÊ¼";
+    elements.overlayText.textContent = "ÇëÏÈÍê³ÉÊÖ»úºÅ + ÑéÖ¤ÂëµÇÂ¼";
 
     closeNameModal();
     closeRecordsModal();
@@ -1172,13 +1174,13 @@
 
     await ensureNickname();
 
-    elements.overlayTitle.textContent = "é‚ªæ¶å°å¥³å­©å‡ºå‡»";
-    elements.overlayText.textContent = "æŒ‰ç©ºæ ¼å‘é’©ï¼ŒæŠ“ä½ä½ çš„ç›®æ ‡ï¼";
+    elements.overlayTitle.textContent = "Ğ°¶ñĞ¡Å®º¢³ö»÷";
+    elements.overlayText.textContent = "°´¿Õ¸ñ·¢¹³£¬×¥×¡ÄãµÄÄ¿±ê£¡";
   }
 
   async function handleSendOtp() {
     if (!authClient?.enabled) {
-      setAuthStatus("è®¤è¯æœåŠ¡ä¸å¯ç”¨", true);
+      setAuthStatus("ÈÏÖ¤·şÎñ²»¿ÉÓÃ", true);
       return;
     }
 
@@ -1186,7 +1188,7 @@
     const normalized = global.AuthClient.normalizePhoneNumber(rawPhone);
 
     if (!normalized) {
-      setAuthStatus("æ‰‹æœºå·æ ¼å¼ä¸æ­£ç¡®", true);
+      setAuthStatus("ÊÖ»úºÅ¸ñÊ½²»ÕıÈ·", true);
       return;
     }
 
@@ -1194,13 +1196,13 @@
     elements.phoneInput.value = normalized;
 
     disableButton(elements.sendOtpBtn, true);
-    setAuthStatus("éªŒè¯ç å‘é€ä¸­...");
+    setAuthStatus("ÑéÖ¤Âë·¢ËÍÖĞ...");
 
     try {
       await authClient.sendOtp(normalized);
-      setAuthStatus("éªŒè¯ç å·²å‘é€ï¼Œè¯·æŸ¥æ”¶çŸ­ä¿¡");
+      setAuthStatus("ÑéÖ¤ÂëÒÑ·¢ËÍ£¬Çë²éÊÕ¶ÌĞÅ");
     } catch (error) {
-      setAuthStatus(`å‘é€å¤±è´¥ï¼š${error?.message || "è¯·ç¨åé‡è¯•"}`, true);
+      setAuthStatus(`·¢ËÍÊ§°Ü£º${error?.message || "ÇëÉÔºóÖØÊÔ"}`, true);
     } finally {
       disableButton(elements.sendOtpBtn, false);
     }
@@ -1208,7 +1210,7 @@
 
   async function handleVerifyOtp() {
     if (!authClient?.enabled) {
-      setAuthStatus("è®¤è¯æœåŠ¡ä¸å¯ç”¨", true);
+      setAuthStatus("ÈÏÖ¤·şÎñ²»¿ÉÓÃ", true);
       return;
     }
 
@@ -1216,19 +1218,19 @@
     const otp = elements.otpInput.value.trim();
 
     disableButton(elements.verifyOtpBtn, true);
-    setAuthStatus("ç™»å½•ä¸­...");
+    setAuthStatus("µÇÂ¼ÖĞ...");
 
     try {
       await authClient.verifyOtp(phone, otp);
       const session = await authClient.getSession();
       if (!session?.user) {
-        throw new Error("ç™»å½•å¤±è´¥ï¼Œè¯·é‡è¯•");
+        throw new Error("µÇÂ¼Ê§°Ü£¬ÇëÖØÊÔ");
       }
       await applyLoggedInState(session);
       elements.otpInput.value = "";
-      setAuthStatus("ç™»å½•æˆåŠŸ");
+      setAuthStatus("µÇÂ¼³É¹¦");
     } catch (error) {
-      setAuthStatus(`ç™»å½•å¤±è´¥ï¼š${error?.message || "è¯·é‡è¯•"}`, true);
+      setAuthStatus(`µÇÂ¼Ê§°Ü£º${error?.message || "ÇëÖØÊÔ"}`, true);
     } finally {
       disableButton(elements.verifyOtpBtn, false);
     }
@@ -1243,13 +1245,13 @@
       // swallow and still clear local state
     }
 
-    applyLoggedOutState("å·²é€€å‡ºç™»å½•ï¼Œè¯·é‡æ–°ç™»å½•");
+    applyLoggedOutState("ÒÑÍË³öµÇÂ¼£¬ÇëÖØĞÂµÇÂ¼");
   }
 
   async function handleSaveNickname() {
     if (!authState.user) {
       show(elements.nameError);
-      elements.nameError.textContent = "è¯·å…ˆç™»å½•";
+      elements.nameError.textContent = "ÇëÏÈµÇÂ¼";
       return;
     }
 
@@ -1271,7 +1273,7 @@
       closeNameModal();
     } catch (error) {
       show(elements.nameError);
-      elements.nameError.textContent = error?.message || "æ˜µç§°ä¿å­˜å¤±è´¥";
+      elements.nameError.textContent = error?.message || "êÇ³Æ±£´æÊ§°Ü";
     } finally {
       disableButton(elements.nameSaveBtn, false);
     }
@@ -1300,17 +1302,17 @@
 
   function renderRecordsRows(rows) {
     if (!rows.length) {
-      elements.recordsList.innerHTML = '<div class="records-row"><span>æš‚æ— è®°å½•</span><span></span><span></span><span></span></div>';
+      elements.recordsList.innerHTML = '<div class="records-row"><span>ÔİÎŞ¼ÇÂ¼</span><span></span><span></span><span></span></div>';
       return;
     }
 
     const head =
-      '<div class="records-row head"><span>æ’å</span><span>æ˜µç§°</span><span>åˆ†æ•°</span><span>æ¸¸æˆæ—¶é—´</span></div>';
+      '<div class="records-row head"><span>ÅÅÃû</span><span>êÇ³Æ</span><span>·ÖÊı</span><span>ÓÎÏ·Ê±¼ä</span></div>';
 
     const body = rows
       .map((row, index) => {
         const rank = index + 1;
-        const name = escapeHtml(String(row.player_name || "åŒ¿å"));
+        const name = escapeHtml(String(row.player_name || "ÄäÃû"));
         const score = Number(row.score || 0);
         const playedAt = escapeHtml(formatPlayedAt(row.created_at));
         return `<div class="records-row"><span>#${rank}</span><span>${name}</span><span>${score}</span><span>${playedAt}</span></div>`;
@@ -1321,17 +1323,19 @@
   }
 
   async function handleOpenRecords() {
-    if (!authState.user) {
-      applyLoggedOutState("è¯·å…ˆç™»å½•åå†æŸ¥è¯¢æˆ˜ç»©");
+    const isAuthed = Boolean(authState.user);
+    const action = getRecordsAction({ isAuthed });
+    if (action === "prompt_login") {
+      openAuthModal("ÇëÏÈµÇÂ¼ºóÔÙ²éÑ¯Õ½¼¨");
       return;
     }
 
     show(elements.recordsModal);
-    elements.recordsStatus.textContent = "åŠ è½½ä¸­...";
+    elements.recordsStatus.textContent = "¼ÓÔØÖĞ...";
     elements.recordsList.innerHTML = "";
 
     if (!leaderboardClient?.enabled) {
-      elements.recordsStatus.textContent = "æ’è¡Œæ¦œæœªé…ç½®";
+      elements.recordsStatus.textContent = "ÅÅĞĞ°ñÎ´ÅäÖÃ";
       return;
     }
 
@@ -1340,9 +1344,9 @@
     try {
       const rows = await leaderboardClient.fetchTopScores(15);
       renderRecordsRows(rows);
-      elements.recordsStatus.textContent = `å·²åŠ è½½ ${rows.length} æ¡`;
+      elements.recordsStatus.textContent = `ÒÑ¼ÓÔØ ${rows.length} Ìõ`;
     } catch (error) {
-      elements.recordsStatus.textContent = `åŠ è½½å¤±è´¥ï¼š${error?.message || "è¯·ç¨åé‡è¯•"}`;
+      elements.recordsStatus.textContent = `¼ÓÔØÊ§°Ü£º${error?.message || "ÇëÉÔºóÖØÊÔ"}`;
     } finally {
       disableButton(elements.recordsBtn, false);
     }
@@ -1351,22 +1355,25 @@
   async function submitRoundScore(result) {
     clearRoundRankUI();
 
-    if (!authState.user) {
-      setLeaderboardStatus("æœªç™»å½•ï¼Œæ— æ³•æäº¤æˆ˜ç»©");
-      return;
-    }
-
-    if (!leaderboardClient?.enabled) {
-      setLeaderboardStatus("æ’è¡Œæ¦œæœªé…ç½®");
-      return;
+    const isAuthed = Boolean(authState.user);
+    const leaderboardEnabled = Boolean(leaderboardClient?.enabled);
+    if (!canSubmitScore({ isAuthed, leaderboardEnabled })) {
+      if (!isAuthed) {
+        setLeaderboardStatus("ÓÎ¿ÍÄ£Ê½£ºµÇÂ¼ºó¿É²ÎÓëÅÅĞĞ°ñ");
+        return;
+      }
+      if (!leaderboardEnabled) {
+        setLeaderboardStatus("ÅÅĞĞ°ñÎ´ÅäÖÃ");
+        return;
+      }
     }
 
     show(elements.rankText);
-    elements.rankText.textContent = "æœ¬å±€å…¨æœæ’åï¼šè®¡ç®—ä¸­...";
+    elements.rankText.textContent = "±¾¾ÖÈ«·şÅÅÃû£º¼ÆËãÖĞ...";
 
     const payload = {
       user_id: authState.user.id,
-      player_name: authState.nickname || "æœªå‘½å",
+      player_name: authState.nickname || "Î´ÃüÃû",
       score: Math.max(0, Number(result.score || 0)),
       duration_seconds: Math.max(1, Number(result.durationSeconds || GAME_CONFIG.roundSeconds)),
       captured_husband_count: Math.max(0, Number(result.capturedHusbandCount || 0))
@@ -1379,29 +1386,28 @@
       const rank = global.LeaderboardUtils.findInsertedEntryRank(sorted, inserted.id);
 
       if (rank) {
-        elements.rankText.textContent = `æœ¬å±€å…¨æœæ’åï¼š#${rank}`;
+        elements.rankText.textContent = `±¾¾ÖÈ«·şÅÅÃû£º#${rank}`;
       } else {
-        elements.rankText.textContent = "æœ¬å±€å…¨æœæ’åï¼š--";
+        elements.rankText.textContent = "±¾¾ÖÈ«·şÅÅÃû£º--";
       }
     } catch (error) {
       if (isAuthError(error)) {
-        elements.rankText.textContent = "æœ¬å±€å…¨æœæ’åï¼š--";
-        setLeaderboardStatus("ç™»å½•çŠ¶æ€å¤±æ•ˆï¼Œè¯·é‡æ–°ç™»å½•åç»§ç»­");
-        applyLoggedOutState("ç™»å½•å·²å¤±æ•ˆï¼Œè¯·é‡æ–°ç™»å½•");
+        elements.rankText.textContent = "±¾¾ÖÈ«·şÅÅÃû£º--";
+        setLeaderboardStatus("µÇÂ¼×´Ì¬Ê§Ğ§£¬ÇëÖØĞÂµÇÂ¼ºó¼ÌĞø");
+        applyLoggedOutState("µÇÂ¼ÒÑÊ§Ğ§£¬ÇëÖØĞÂµÇÂ¼");
         return;
       }
-      elements.rankText.textContent = "æœ¬å±€å…¨æœæ’åï¼š--";
-      setLeaderboardStatus(`æˆç»©æäº¤å¤±è´¥ï¼š${error?.message || "è¯·ç¨åé‡è¯•"}`);
+      elements.rankText.textContent = "±¾¾ÖÈ«·şÅÅÃû£º--";
+      setLeaderboardStatus(`³É¼¨Ìá½»Ê§°Ü£º${error?.message || "ÇëÉÔºóÖØÊÔ"}`);
     }
   }
 
   function bindEvents() {
     elements.startBtn.addEventListener("click", () => {
-      if (!authState.user) {
-        applyLoggedOutState("è¯·å…ˆç™»å½•åå¼€å§‹æ¸¸æˆ");
+      if (!canStartRound()) {
         return;
       }
-      if (!authState.nickname) {
+      if (authState.user && !authState.nickname) {
         openNameModal(true);
         return;
       }
@@ -1411,11 +1417,10 @@
     });
 
     elements.restartBtn.addEventListener("click", () => {
-      if (!authState.user) {
-        applyLoggedOutState("è¯·å…ˆç™»å½•åå¼€å§‹æ¸¸æˆ");
+      if (!canStartRound()) {
         return;
       }
-      if (!authState.nickname) {
+      if (authState.user && !authState.nickname) {
         openNameModal(true);
         return;
       }
@@ -1433,7 +1438,7 @@
 
     elements.renameBtn.addEventListener("click", () => {
       if (!authState.user) {
-        applyLoggedOutState("è¯·å…ˆç™»å½•");
+        applyLoggedOutState("ÇëÏÈµÇÂ¼");
         return;
       }
       openNameModal(false);
@@ -1453,9 +1458,6 @@
       }
       event.preventDefault();
 
-      if (!authState.user) {
-        return;
-      }
       game.fireHook();
     });
   }
@@ -1474,7 +1476,7 @@
     });
 
     if (!authClient || !authClient.enabled) {
-      applyLoggedOutState("è®¤è¯æœåŠ¡æœªé…ç½®æˆ–æœªåŠ è½½");
+      applyLoggedOutState("ÈÏÖ¤·şÎñÎ´ÅäÖÃ»òÎ´¼ÓÔØ");
       return;
     }
 
@@ -1493,7 +1495,7 @@
       // continue to login modal
     }
 
-    applyLoggedOutState("è¯·å…ˆç™»å½•åå¼€å§‹æ¸¸æˆ");
+    applyLoggedOutState("ÇëÏÈµÇÂ¼ºó¿ªÊ¼ÓÎÏ·");
   }
 
   async function init() {
@@ -1514,3 +1516,6 @@
 
   init();
 })(typeof window !== "undefined" ? window : globalThis);
+
+
+
