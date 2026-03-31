@@ -1,0 +1,9 @@
+{
+  "name": "evil-girl-gold-miner",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/core.test.js && node tests/leaderboard.test.js && node tests/auth-client.test.js"
+  }
+}

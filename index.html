@@ -1,0 +1,87 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>老公别跑</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="hud">
+        <div>分数：<span id="score">0</span></div>
+        <div>目标分：<span id="target-score">1500</span></div>
+        <div>时间：<span id="time-left">60</span>s</div>
+        <div class="player-actions">
+          <span id="auth-label">未登录</span>
+          <span>玩家：<span id="player-name-label">未设置</span></span>
+          <button id="records-btn" type="button" class="small-btn" disabled>战绩查询</button>
+          <button id="rename-btn" type="button" class="small-btn" disabled>改昵称</button>
+          <button id="logout-btn" type="button" class="small-btn danger-btn hidden">退出登录</button>
+        </div>
+      </header>
+
+      <section class="stage-wrap">
+        <canvas id="game-canvas" width="1280" height="720"></canvas>
+
+        <div id="overlay" class="overlay hidden">
+          <h2 id="overlay-title">邪恶小女孩出击</h2>
+          <p id="overlay-text">按空格发钩，抓住你的目标！</p>
+          <p id="rank-text" class="rank-text hidden">本局历史排名：--</p>
+          <p id="leaderboard-status" class="leaderboard-status hidden"></p>
+          <div class="actions">
+            <button id="start-btn" type="button" disabled>开始游戏</button>
+            <button id="restart-btn" type="button" class="hidden" disabled>再来一局</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="auth-modal" class="name-modal hidden">
+      <div class="name-card">
+        <h3>手机号登录</h3>
+        <p class="name-tip">使用手机号 + 验证码登录，未登录不可开始游戏。</p>
+        <input id="phone-input" type="tel" maxlength="20" placeholder="+8613812345678" />
+        <div class="name-actions">
+          <button id="send-otp-btn" type="button" class="small-btn">发送验证码</button>
+        </div>
+        <input id="otp-input" type="text" inputmode="numeric" maxlength="6" placeholder="输入验证码" />
+        <div class="name-actions">
+          <button id="verify-otp-btn" type="button">登录</button>
+        </div>
+        <p id="auth-status" class="name-tip"></p>
+        <p id="auth-error" class="name-error hidden"></p>
+      </div>
+    </div>
+
+    <div id="name-modal" class="name-modal hidden">
+      <div class="name-card">
+        <h3 id="name-modal-title">设置昵称</h3>
+        <p class="name-tip">首次登录请设置 1-12 字符昵称</p>
+        <input id="name-input" maxlength="12" placeholder="输入昵称" />
+        <p id="name-error" class="name-error hidden"></p>
+        <div class="name-actions">
+          <button id="name-save-btn" type="button">保存昵称</button>
+          <button id="name-cancel-btn" type="button" class="small-btn hidden">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="records-modal" class="records-modal hidden">
+      <div class="records-card">
+        <div class="records-header">
+          <h3>全服历史 Top15</h3>
+          <button id="records-close-btn" type="button" class="small-btn">关闭</button>
+        </div>
+        <p id="records-status" class="records-status">加载中...</p>
+        <div id="records-list" class="records-list"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./src/auth-client.js" defer></script>
+    <script src="./src/leaderboard-utils.js" defer></script>
+    <script src="./src/leaderboard-client.js" defer></script>
+    <script src="./src/main-standalone.js" defer></script>
+  </body>
+</html>
