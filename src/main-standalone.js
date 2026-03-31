@@ -1,4 +1,4 @@
-import { canStartRound, canSubmitScore, getRecordsAction } from "./game-access.js";
+import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy } from "./game-access.js";
 
 (function (global) {
   "use strict";
@@ -1478,7 +1478,8 @@ async function ensureNickname() {
     });
 
     if (!authClient || !authClient.enabled) {
-      applyLoggedOutState("认证服务未配置或未加载", { openAuthModal: false });
+      const initPolicy = getInitAuthPolicy({ authEnabled: false, hasSession: false });
+      applyLoggedOutState("认证服务未配置或未加载", { openAuthModal: initPolicy.openAuthModal });
       return;
     }
 
@@ -1489,7 +1490,8 @@ async function ensureNickname() {
 
     try {
       const session = await authClient.getSession();
-      if (session?.user) {
+      const initPolicy = getInitAuthPolicy({ authEnabled: true, hasSession: Boolean(session?.user) });
+      if (initPolicy.shouldApplyLoggedIn) {
         await applyLoggedInState(session);
         return;
       }
@@ -1497,7 +1499,8 @@ async function ensureNickname() {
       // continue to login modal
     }
 
-    applyLoggedOutState("请先登录后开始游戏", { openAuthModal: false });
+    const initPolicy = getInitAuthPolicy({ authEnabled: true, hasSession: false });
+    applyLoggedOutState("请先登录后开始游戏", { openAuthModal: initPolicy.openAuthModal });
   }
 
   async function init() {
@@ -1518,6 +1521,11 @@ async function ensureNickname() {
 
   init();
 })(typeof window !== "undefined" ? window : globalThis);
+
+
+
+
+
 
 
 

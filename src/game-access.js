@@ -5,3 +5,8 @@ export const canSubmitScore = ({ isAuthed, leaderboardEnabled }) =>
 
 export const getRecordsAction = ({ isAuthed }) =>
   (isAuthed === true ? 'open_records' : 'prompt_login');
+
+export const getInitAuthPolicy = ({ authEnabled, hasSession }) => ({
+  shouldApplyLoggedIn: authEnabled === true && hasSession === true,
+  openAuthModal: false
+});

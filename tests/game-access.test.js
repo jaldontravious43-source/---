@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { canStartRound, canSubmitScore, getRecordsAction } from "../src/game-access.js";
+import { canStartRound, canSubmitScore, getRecordsAction, getInitAuthPolicy } from "../src/game-access.js";
 
 function runTest(name, fn) {
   try {
@@ -43,6 +43,23 @@ runTest("records action prompts login when not strictly authorized", () => {
   for (const value of ["yes", 1, undefined]) {
     assert.equal(getRecordsAction({ isAuthed: value }), "prompt_login");
   }
+});
+
+runTest("init policy avoids auto auth modal when auth service unavailable", () => {
+  const policy = getInitAuthPolicy({ authEnabled: false, hasSession: false });
+  assert.equal(policy.openAuthModal, false);
+  assert.equal(policy.shouldApplyLoggedIn, false);
+});
+
+runTest("init policy avoids auto auth modal when session missing", () => {
+  const policy = getInitAuthPolicy({ authEnabled: true, hasSession: false });
+  assert.equal(policy.openAuthModal, false);
+  assert.equal(policy.shouldApplyLoggedIn, false);
+});
+
+runTest("init policy allows logged-in branch when session exists", () => {
+  const policy = getInitAuthPolicy({ authEnabled: true, hasSession: true });
+  assert.equal(policy.shouldApplyLoggedIn, true);
 });
 
 console.log("Game access tests completed.");
