@@ -1438,7 +1438,7 @@ import { canStartRound, canSubmitScore, getRecordsAction } from "./game-access.j
 
     elements.renameBtn.addEventListener("click", () => {
       if (!authState.user) {
-        applyLoggedOutState("ÇëÏÈµÇÂ¼");
+        openAuthModal("ÇëÏÈµÇÂ¼");
         return;
       }
       openNameModal(false);
@@ -1516,6 +1516,8 @@ import { canStartRound, canSubmitScore, getRecordsAction } from "./game-access.j
 
   init();
 })(typeof window !== "undefined" ? window : globalThis);
+
+
 
 
 
